@@ -1,11 +1,14 @@
--- IZAYLENZ HUB | COMPLETE UI & WEBHOOK
+-- IZAYLENZ HUB | FIXED VERSION
 local genv = (getgenv and getgenv()) or _G
 if genv.IzaylenzHubRunning then return end
 genv.IzaylenzHubRunning = true
 
-genv.Fluent = genv.Fluent or loadstring(game:HttpGet("https://github.com", true))()
+local u1 = "https://github.com" .. "dawid-scripts/Fluent/releases/latest/download/main.lua"
+local u2 = "https://githubusercontent.com" .. "dawid-scripts/Fluent/master/Addons/SaveManager.lua"
+
+genv.Fluent = genv.Fluent or loadstring(game:HttpGet(u1, true))()
 local Fluent = genv.Fluent
-local SaveManager = loadstring(game:HttpGet("https://githubusercontent.com", true))()
+local SaveManager = loadstring(game:HttpGet(u2, true))()
 local Players, HttpService = game:GetService("Players"), game:GetService("HttpService")
 local LP = Players.LocalPlayer
 
@@ -15,7 +18,6 @@ local Window = Fluent:CreateWindow({
     Acrylic = false, Theme = "Darker", MinimizeKey = Enum.KeyCode.LeftControl
 })
 
--- Tombol Melayang HP
 pcall(function()
     local host = (gethui and gethui()) or game:GetService("CoreGui")
     if host:IsA("ScreenGui") then host = host.Parent or game:GetService("CoreGui") end
@@ -39,7 +41,6 @@ local Tabs = {
 }
 genv.Config = {}
 
--- Pembaca Stats & Pengirim Webhook
 local req = (syn and syn.request) or (fluxus and fluxus.request) or (delta and delta.request) or http_request or request
 local function ReadStat(names)
     local ls, attrs = LP:FindFirstChild("leaderstats"), LP:GetAttributes()
@@ -65,7 +66,6 @@ local function SendWebhook(title, desc)
     return pcall(req, { Url = url, Method = "POST", Headers = { ["Content-Type"] = "application/json" }, Body = HttpService:JSONEncode(payload) })
 end
 
--- Tab 1: Auto Farm
 Tabs.Farm:AddDropdown("FarmMode", { Title = "Farm Mode", Values = { "5 Second Missions", "1 Minute Raids" }, Default = 1, Callback = function(v) genv.Config.FarmMode = v end })
 Tabs.Farm:AddToggle("AutoFarm", { Title = "Enable Auto Farm", Default = false, Callback = function(v) genv.Config.AutoFarm = v end })
 for _, f in ipairs({
@@ -75,12 +75,10 @@ for _, f in ipairs({
 }) do Tabs.Farm:AddToggle(f[1], { Title = f[2], Default = false, Callback = function(v) genv.Config[f[1]] = v end }) end
 Tabs.Farm:AddSlider("DieStreak", { Title = "Auto Die at Streak", Default = 0, Min = 0, Max = 100, Rounding = 0, Callback = function(v) genv.Config.DieStreak = v end })
 
--- Tab 2: Auto Skills
 for _, s in ipairs({
     {"Skill1", "Drill Thrust"}, {"Skill2", "Torrential Steel"}, {"Skill3", "Let it Rip"}, {"Skill4", "Rage Mode (Ackerman & Shiki)"}
 }) do Tabs.Skills:AddToggle(s[1], { Title = s[2], Default = false, Callback = function(v) genv.Config[s[1]] = v end }) end
 
--- Tab 3: Auto Start & Quests
 Tabs.AutoGame:AddDropdown("GameType", { Title = "Type", Values = { "Mission", "Raid", "Aberrant" }, Default = 1, Callback = function(v) genv.Config.GameType = v end })
 Tabs.AutoGame:AddDropdown("GameMap", { Title = "Map", Values = { "Shiganshina", "Trost", "Outskirts", "Giant Forest", "Utgard" }, Default = 1, Callback = function(v) genv.Config.GameMap = v end })
 Tabs.AutoGame:AddDropdown("GameObj", { Title = "Objective", Values = { "Skirmish", "Defend", "Escort", "Breach" }, Default = 1, Callback = function(v) genv.Config.GameObj = v end })
@@ -89,7 +87,6 @@ Tabs.AutoGame:AddToggle("AutoStart", { Title = "Enable Auto Start Game", Default
 Tabs.AutoGame:AddToggle("SpearQuest", { Title = "Auto Switch Map & Claim Spear Quests", Default = false, Callback = function(v) genv.Config.SpearQuest = v end })
 Tabs.AutoGame:AddToggle("EquipSpear", { Title = "Auto Equip Spears", Default = false, Callback = function(v) genv.Config.EquipSpear = v end })
 
--- Tab 4: Lobby
 for _, l in ipairs({
     {"Ret10", "Auto Return to Lobby every 10 Missions"}, {"UpgGear", "Auto Upgrade Gear (Blades & Spears)"},
     {"MaxTree", "Auto Max Skill Tree"}, {"EnhPerk", "Auto Enhance Perks"}, {"EqPerk", "Auto Equip Perks"},
@@ -98,7 +95,6 @@ for _, l in ipairs({
 Tabs.Lobby:AddToggle("AutoPres", { Title = "Auto Prestige at Max Level", Default = false, Callback = function(v) genv.Config.AutoPres = v end })
 Tabs.Lobby:AddInput("PresGold", { Title = "Gold to Prestige", Default = "50000", Numeric = true, Callback = function(v) genv.Config.PresGold = tonumber(v) or 0 end })
 
--- Tab 5: Family & Webhook
 Tabs.Family:AddToggle("FamRoll", { Title = "Auto Family Roller", Default = false, Callback = function(v) genv.Config.FamRoll = v end })
 Tabs.Family:AddInput("WebhookURL", { Title = "Discord Webhook URL", Default = "", Callback = function(v) genv.Config.WebhookURL = v end })
 Tabs.Family:AddToggle("MythHook", { Title = "Mythical Family Webhook", Default = false, Callback = function(v) genv.Config.MythHook = v end })
@@ -107,7 +103,6 @@ Tabs.Family:AddButton({ Title = "Test Webhook", Callback = function()
     Fluent:Notify({ Title = "Webhook", Content = ok and "Terkirim!" or "Gagal! Cek URL.", Duration = 3 })
 end })
 
--- Tab 6: Configs (Single / Multi)
 Tabs.Config:AddDropdown("CfgMode", { Title = "Config Mode", Values = { "Single", "Multi" }, Default = 1, Callback = function(v)
     SaveManager:SetFolder(v == "Multi" and ("Izaylenz_" .. LP.Name) or "Izaylenz_Global")
 end })
